@@ -11,6 +11,7 @@ import {
 } from '@movie-game/shared';
 import { useEffect, useRef, useState } from 'react';
 import { CardChip } from '../components/CardChip';
+import { RemovableDropZone } from '../components/RemovableDropZone';
 import { ClaimMovie } from '../components/ClaimMovie';
 import { getMovieById } from '../data/movies';
 import { PLAYER_COLORS } from '../game/setup';
@@ -352,6 +353,7 @@ export function GameScreen({ store, viewerId, hotseat, onExit, onRematch }: Game
                           <CardChip key={card.id} card={card} onRemove={toggleCard} />
                         ))}
                       </div>
+                    <RemovableDropZone onRemoveCard={toggleCard} onClear={() => setSelectedIds(new Set())} />
                     </>
                   )}
                 </div>

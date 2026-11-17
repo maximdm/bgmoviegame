@@ -14,6 +14,7 @@ import {
 } from '@movie-game/shared';
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { CardChip } from '../components/CardChip';
+import { RemovableDropZone } from '../components/RemovableDropZone';
 import { ClaimMovie } from '../components/ClaimMovie';
 import { Dice } from '../components/Dice';
 import { categoryIconSvg } from '../components/categoryIcons';
@@ -665,6 +666,7 @@ export function BoardScreen({
                         <CardChip key={card.id} card={card} onRemove={toggleCard} />
                       ))}
                     </div>
+                  <RemovableDropZone onRemoveCard={toggleCard} onClear={() => setSelectedIds(new Set())} />
                   </>
                 )}
               </div>

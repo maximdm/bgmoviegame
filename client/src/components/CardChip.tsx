@@ -72,7 +72,12 @@ export function CardChip({ card, onRemove }: CardChipProps) {
         type="button"
         className={`movie-card movie-card--removable${showPoster ? ' movie-card--poster' : ''}`}
         style={style}
+        draggable
         onClick={() => onRemove(card.id)}
+        onDragStart={(event) => {
+          event.dataTransfer.setData('text/plain', card.id);
+          event.dataTransfer.effectAllowed = 'move';
+        }}
         aria-label={`Remove ${card.label} from selection`}
       >
         {inner}
