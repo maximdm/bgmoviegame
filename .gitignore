@@ -15,3 +15,7 @@ data/.cache/
 test-results/
 playwright-report/
 blob-report/
+
+# Agent/tooling artifacts (not part of the game)
+.agents/
+skills-lock.json
