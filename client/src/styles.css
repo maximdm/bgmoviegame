@@ -827,6 +827,63 @@ input[type='text']:focus {
   flex-direction: column;
 }
 
+/* Removable chip (selection tray): reset button defaults and make it a clear
+   click target — clicking the card deselects it. */
+.movie-card--removable {
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.movie-card--removable:hover,
+.movie-card--removable:focus-visible {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 2px var(--gold),
+    0 12px 20px rgb(0 0 0 / 45%);
+  outline: none;
+}
+
+.movie-card--removable:active {
+  transform: translateY(-1px);
+}
+
+/* The × affordance, top-right corner. */
+.movie-card__remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(8 10 16 / 78%);
+  color: #fecaca;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 50%);
+}
+
+.movie-card--removable:hover .movie-card__remove,
+.movie-card--removable:focus-visible .movie-card__remove {
+  background: var(--red);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .movie-card--removable {
+    transition: none;
+  }
+  .movie-card--removable:hover,
+  .movie-card--removable:focus-visible {
+    transform: none;
+  }
+}
+
 .movie-card__head {
   display: flex;
   align-items: center;

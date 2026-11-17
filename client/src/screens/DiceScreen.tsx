@@ -556,7 +556,7 @@ export function DiceScreen({
                     </div>
                     <div className="chip-row">
                       {selectedCards.map((card) => (
-                        <CardChip key={card.id} card={card} />
+                        <CardChip key={card.id} card={card} onRemove={toggleCard} />
                       ))}
                     </div>
                   </>

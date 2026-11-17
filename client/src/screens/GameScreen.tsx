@@ -349,7 +349,7 @@ export function GameScreen({ store, viewerId, hotseat, onExit, onRematch }: Game
                       </div>
                       <div className="chip-row">
                         {selectedCards.map((card) => (
-                          <CardChip key={card.id} card={card} />
+                          <CardChip key={card.id} card={card} onRemove={toggleCard} />
                         ))}
                       </div>
                     </>
