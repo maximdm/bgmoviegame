@@ -1,0 +1,26 @@
+{
+  "name": "movie-game",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "shared",
+    "data",
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
+    "build": "npm run build -w shared && npm run build -w data && npm run build -w client && npm run build -w server",
+    "build:shared": "npm run build -w shared",
+    "build:client": "npm run build -w client",
+    "build:server": "npm run build -w server",
+    "test": "npm run test -w shared",
+    "test:e2e": "npm run test:e2e -w client",
+    "data:fetch": "npm run fetch -w data",
+    "data:fetch:offline": "npm run fetch:offline -w data"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

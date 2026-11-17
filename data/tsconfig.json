@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"],
+    "paths": {
+      "@movie-game/shared": ["../shared/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}
