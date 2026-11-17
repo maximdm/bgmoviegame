@@ -31,5 +31,7 @@ jobs:
         run: npm test
 
       # The exact command Vercel runs for the static client build.
+      # Use the workspace *name* (@movie-game/client), not the path (client):
+      # some npm versions only resolve -w by name.
       - name: Build client
-        run: npm run build -w client
+        run: npm run build -w @movie-game/client
