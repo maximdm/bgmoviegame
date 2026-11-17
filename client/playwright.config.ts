@@ -9,11 +9,13 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
   // Cap parallelism: the Find-mode specs wait out a real 15–17s contest window,
-  // and ten concurrent browser pages starve that timer under load (flaky). Two
-  // workers keep the suite deterministic without a meaningful speed cost.
-  workers: 2,
+  // and concurrent browser pages + the Vite dev server starve that in-browser
+  // timer under load (flaky). Two workers are fine locally; in CI we drop to a
+  // single worker so the contest window closes on schedule and the window-close
+  // assertions stop flaking on shared runners.
+  workers: process.env.CI ? 1 : 2,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 2 : 0,
   // Some Find-mode specs deliberately wait out a 15–17s contest window; give
   // them headroom so parallel-worker load can't push a single test past the limit.
   timeout: 60_000,
