@@ -1,6 +1,6 @@
 import type { BoardState, DiceState, GameState, Movie } from '@movie-game/shared';
 import { CardChip } from '../components/CardChip';
-import { MOVIES_BY_ID } from '../data/movies';
+import { getMovieById } from '../data/movies';
 
 interface ResultsProps {
   state: GameState | BoardState | DiceState;
@@ -15,7 +15,7 @@ function declaredCards(state: GameState | BoardState | DiceState, playerId: stri
 }
 
 function movieFor(comboMovieId: string | undefined): Movie | undefined {
-  return comboMovieId ? MOVIES_BY_ID.get(comboMovieId) : undefined;
+  return getMovieById(comboMovieId);
 }
 
 export function Results({ state, onRematch, onExit }: ResultsProps) {

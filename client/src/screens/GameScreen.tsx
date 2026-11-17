@@ -12,7 +12,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { CardChip } from '../components/CardChip';
 import { ClaimMovie } from '../components/ClaimMovie';
-import { MOVIES_BY_ID } from '../data/movies';
+import { getMovieById } from '../data/movies';
 import { PLAYER_COLORS } from '../game/setup';
 import { useGameState, type GameStore } from '../game/store';
 import { Board } from '../pixi/Board';
@@ -396,7 +396,7 @@ export function GameScreen({ store, viewerId, hotseat, onExit, onRematch }: Game
           <div className="combo-grid">
             {state.declared.map((combo) => {
               const ownerIndex = state.players.findIndex((player) => player.id === combo.playerId);
-              const movie = combo.movieId ? MOVIES_BY_ID.get(combo.movieId) : undefined;
+              const movie = getMovieById(combo.movieId);
               return (
                 <article key={combo.id} className="combo-card">
                   <header>

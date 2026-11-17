@@ -1,6 +1,6 @@
 import type { GameMode } from '@movie-game/shared';
 import { useState } from 'react';
-import { DATASET_COUNT } from '../data/movies';
+import { getDatasetCount } from '../data/movies';
 import {
   MAX_LOCAL_PLAYERS,
   MIN_PLAYERS,
@@ -87,7 +87,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
           with up to six people, or take on a table of bots.
         </p>
         <div className="menu__stats">
-          <span>{DATASET_COUNT} films</span>
+          <span>{getDatasetCount()} films</span>
           <span>6 categories</span>
           <span>2–6 players</span>
           <span>Hotseat or AI</span>

@@ -17,7 +17,7 @@ import { CardChip } from '../components/CardChip';
 import { ClaimMovie } from '../components/ClaimMovie';
 import { Dice } from '../components/Dice';
 import { categoryIconSvg } from '../components/categoryIcons';
-import { MOVIES_BY_ID } from '../data/movies';
+import { getMovieById } from '../data/movies';
 import { PLAYER_COLORS } from '../game/setup';
 import { useBoardState, type BoardStore } from '../game/boardStore';
 import { Results } from './Results';
@@ -699,7 +699,7 @@ export function BoardScreen({
           <h3>Declared movies</h3>
           <div className="combo-grid">
             {state.declared.map((combo) => {
-              const movie = combo.movieId ? MOVIES_BY_ID.get(combo.movieId) : undefined;
+              const movie = getMovieById(combo.movieId);
               const declarerIndex = state.players.findIndex((p) => p.id === combo.playerId);
               const declarer = declarerIndex >= 0 ? state.players[declarerIndex] : undefined;
               return (

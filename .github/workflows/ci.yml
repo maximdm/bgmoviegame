@@ -35,3 +35,39 @@ jobs:
       # some npm versions only resolve -w by name.
       - name: Build client
         run: npm run build -w @movie-game/client
+
+  # End-to-end tests drive the real app in a browser (Chromium) against the Vite
+  # dev server. They exercise gameplay through the dev-only `window.__movieGame`
+  # hook. Run in parallel with `verify` so a red E2E doesn't wait on the build.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Download the Chromium binary (and its OS libraries) Playwright needs.
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # Runs the Vite dev server itself (see client/playwright.config.ts), so no
+      # separate preview/build step is required.
+      - name: Run end-to-end tests
+        run: npm run test:e2e
+
+      # Persist traces/screenshots on failure for debugging.
+      - name: Upload Playwright report
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: client/playwright-report/
+          retention-days: 7
