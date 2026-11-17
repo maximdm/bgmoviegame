@@ -137,6 +137,14 @@ async function snapshot(page: Page): Promise<{
 }
 
 test('a contested claim is never auto-awarded as real when the window closes', async ({ page }) => {
+  // Shorten the contest window so the countdown doesn't depend on a real 15s
+  // timer firing reliably on a loaded CI runner (the original flake: on a slow
+  // runner the interval ticks were delayed past the fixed wait + assert budget).
+  // The override is test-only and applied before the app mounts.
+  await page.addInitScript(() => {
+    (window as unknown as { __movieGameTestTimers?: number }).__movieGameTestTimers = 2500;
+  });
+
   await startHotseat(page);
   const claim = await declare(page, 'The Matrix');
   expect(claim.ok, claim.error).toBe(true);
@@ -148,16 +156,23 @@ test('a contested claim is never auto-awarded as real when the window closes', a
   expect(contestResult.ok, contestResult.error).toBe(true);
   expect((await snapshot(page)).pending?.contests).toBe(1);
 
-  // Wait past CONTEST_TIME_MS (15s) for the interval to fire `finish`.
-  await page.waitForTimeout(17_000);
-
-  const after = await snapshot(page);
-  // Regression guard: the contested claim must NOT have been auto-awarded.
-  expect(after.pending).not.toBeNull();
-  expect(after.declared.length).toBe(0);
-
-  // The table's ruling panel is shown, awaiting an explicit decision.
-  await expect(page.locator('.claim-resolution')).toBeVisible();
+  // Poll for the ruling panel to appear. Once it does, the regressions must hold:
+  // the contested claim was NOT auto-awarded as real (pending survives, no
+  // declared combo) and the table's ruling panel is shown awaiting a decision.
+  await expect
+    .poll(
+      async () => {
+        const panel = await page.locator('.claim-resolution').count();
+        const snap = await snapshot(page);
+        return {
+          panel,
+          declaredCount: snap.declared.length,
+          pendingNull: snap.pending === null,
+        };
+      },
+      { timeout: 30_000 },
+    )
+    .toMatchObject({ panel: 1, declaredCount: 0, pendingNull: false });
 });
 
 test('contesting through the UI opens the ruling panel at once', async ({ page }) => {

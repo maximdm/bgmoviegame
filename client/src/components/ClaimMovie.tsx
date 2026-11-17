@@ -49,6 +49,19 @@ const formatTime = (ms: number): string => `${Math.ceil(ms / 1000)}s`;
  * the table gets a short window to contest it. Create-a-Movie replaces that with
  * a freeform Title + Synopsis pitch and, for 4–6 players, a thumbs up/down vote.
  */
+
+/**
+ * Test-only override of the naming/contest durations. When a test sets
+ * `window.__movieGameTestTimers` (ms) before the app mounts, the countdown uses
+ * that instead of the real constants — so the contest-window e2e specs don't
+ * depend on a real 15-second timer firing on a loaded CI runner. Unset in
+ * production, where the real durations always apply.
+ */
+function effectiveTimerMs(fallback: number): number {
+  const override = (window as unknown as { __movieGameTestTimers?: number }).__movieGameTestTimers;
+  return typeof override === 'number' && override > 0 ? override : fallback;
+}
+
 export function ClaimMovie({
   stage,
   mode,
@@ -69,7 +82,11 @@ export function ClaimMovie({
   const isCreate = (mode ?? pending?.mode) === 'create';
   // The points actually awarded for a real film, after the no-cast penalty.
   const netAtStake = Math.max(0, pointsAtStake - castPenalty);
-  const [timeLeft, setTimeLeft] = useState(stage === 'naming' && !isCreate ? NAME_TIME_MS : CONTEST_TIME_MS);
+  // Only the contest window is overridable in tests; the naming window keeps its
+  // real duration (vs-AI honor-check flows rely on it).
+  const [timeLeft, setTimeLeft] = useState(
+    stage === 'naming' && !isCreate ? NAME_TIME_MS : effectiveTimerMs(CONTEST_TIME_MS),
+  );
   const [title, setTitle] = useState('');
   const [synopsis, setSynopsis] = useState('');
   const [proofDraft, setProofDraft] = useState('');
@@ -90,7 +107,7 @@ export function ClaimMovie({
 
   // Reset local state whenever a new declaration enters the stage.
   useEffect(() => {
-    setTimeLeft(stage === 'naming' && !isCreate ? NAME_TIME_MS : CONTEST_TIME_MS);
+    setTimeLeft(stage === 'naming' && !isCreate ? NAME_TIME_MS : effectiveTimerMs(CONTEST_TIME_MS));
     setTitle('');
     setSynopsis('');
     setProofDraft('');
