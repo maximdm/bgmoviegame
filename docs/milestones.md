@@ -132,11 +132,21 @@ immediately, no contest window).
 - [ ] Reconnection handling (best-effort).
 
 ## M8 — Polish & tuning
-- [ ] Animation/sound pass.
-- [ ] Poster-image loading with color-card fallback (cards currently show label only).
-- [ ] Scoring/hand-size/win-threshold tuning after playtest.
-- [ ] Mapping table tuning (Setting/Period).
-- [ ] README + run instructions.
+- [x] README + run instructions (see repo-root `README.md`).
+- [x] Poster-image loading with colour-card fallback — `Card` now carries `posterUrl`
+      (populated in `buildDeck`); `CardChip` shows the Wikimedia poster with a
+      legibility scrim and falls back to the label card on error/absence. ~35% of
+      the dataset has a poster. (Pixi `CardView` on the Find-a-Movie board still
+      renders the label card — a possible follow-up.)
+- [x] Animation/micro-interaction pass — DOM hand cards and declared combos fade in
+      on mount (a "deal" effect), hand cards lift on hover, and the whole thing
+      respects `prefers-reduced-motion`. (Sound deferred — autoplay/UX risk.)
+- [ ] Scoring/hand-size/win-threshold tuning after playtest — see the M6 note:
+      Create-a-Movie still ends very fast (~2–3 turns); lower its bonuses or raise
+      its target once there is playtest data. **Deferred.**
+- [ ] Mapping table tuning (Setting/Period) — the heuristic mapping tables in
+      `shared/src/wikidataMapping.ts` are the main data risk; tune after playtest.
+      **Deferred.**
 
 ## M9 — Board-game variant ✅
 Completed 2026-11-16. A second way to play over the same Find/Create objective: a

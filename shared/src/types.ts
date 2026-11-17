@@ -71,6 +71,13 @@ export interface Card {
   category: Category;
   label: string;
   movieId: string;
+  /**
+   * Optional poster image (Wikimedia Commons URL) for cards whose source movie
+   * has one. ~35% of the dataset has a poster; the rest fall back to the
+   * colour/label card in the UI. Carried on the card so renderers don't need a
+   * per-card dataset lookup.
+   */
+  posterUrl?: string;
 }
 
 export type GameMode = 'find' | 'create';

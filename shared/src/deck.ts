@@ -82,7 +82,7 @@ export function buildDeck(
     const key = `${movie.id}:${category}`;
     const index = counters.get(key) ?? 0;
     counters.set(key, index + 1);
-    cards.push({ id: `${key}:${index}`, category, label, movieId: movie.id });
+    cards.push({ id: `${key}:${index}`, category, label, movieId: movie.id, posterUrl: movie.posterUrl });
   };
 
   for (const movie of chosen) {
