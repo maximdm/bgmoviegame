@@ -844,6 +844,78 @@ describe('declaring combos', () => {
     expect(c.winnerId).toBeUndefined();
     expect(c.declared[0]).toMatchObject({ mode: 'create', verified: false, points: 0 });
   });
+
+  it('requires UNANIMOUS approval in a 5-player Create game (all 4 others must thumb up)', () => {
+    const actor = card('m1', 'Actor');
+    const actress = card('m2', 'Actress');
+    const spare = card('m3', 'Genre');
+    const players = [
+      makePlayer('p1', [actor, actress, spare]),
+      makePlayer('p2'),
+      makePlayer('p3'),
+      makePlayer('p4'),
+      makePlayer('p5'),
+    ];
+    const state = makeState({ mode: 'create', phase: 'discard', players });
+
+    const pitched = expectOk(
+      applyAction(state, {
+        type: 'declare',
+        playerId: 'p1',
+        cardIds: [actor.id, actress.id],
+        claimedTitle: 'Quorum',
+      }),
+    );
+    // 3 of 4 thumbs up is NOT enough at 5 players (old rule would have won here).
+    let s = pitched;
+    for (const id of ['p2', 'p3', 'p4']) {
+      s = expectOk(applyAction(s, { type: 'vote', playerId: id, declarationId: 'pending-1', vote: 'up' }));
+    }
+    expect(s.phase).not.toBe('gameOver');
+    expect(s.winnerId).toBeUndefined();
+    // The 4th (and final) other player thumbs up → unanimous → win.
+    const won = expectOk(
+      applyAction(s, { type: 'vote', playerId: 'p5', declarationId: 'pending-1', vote: 'up' }),
+    );
+    expect(won.phase).toBe('gameOver');
+    expect(won.winnerId).toBe('p1');
+  });
+
+  it('requires UNANIMOUS approval in a 6-player Create game (all 5 others must thumb up)', () => {
+    const actor = card('m1', 'Actor');
+    const actress = card('m2', 'Actress');
+    const spare = card('m3', 'Genre');
+    const players = [
+      makePlayer('p1', [actor, actress, spare]),
+      makePlayer('p2'),
+      makePlayer('p3'),
+      makePlayer('p4'),
+      makePlayer('p5'),
+      makePlayer('p6'),
+    ];
+    const state = makeState({ mode: 'create', phase: 'discard', players });
+
+    const pitched = expectOk(
+      applyAction(state, {
+        type: 'declare',
+        playerId: 'p1',
+        cardIds: [actor.id, actress.id],
+        claimedTitle: 'Full Table',
+      }),
+    );
+    // 3 of 5 thumbs up (the old winning bar) no longer wins at 6 players.
+    let s = pitched;
+    for (const id of ['p2', 'p3', 'p4']) {
+      s = expectOk(applyAction(s, { type: 'vote', playerId: id, declarationId: 'pending-1', vote: 'up' }));
+    }
+    expect(s.phase).not.toBe('gameOver');
+    // A single thumbs-down among the rest dooms the pitch even if everyone else agrees.
+    s = expectOk(applyAction(s, { type: 'vote', playerId: 'p5', declarationId: 'pending-1', vote: 'down' }));
+    s = expectOk(applyAction(s, { type: 'vote', playerId: 'p6', declarationId: 'pending-1', vote: 'up' }));
+    expect(s.phase).not.toBe('gameOver');
+    expect(s.winnerId).toBeUndefined();
+    expect(s.declared[0]).toMatchObject({ mode: 'create', verified: false });
+  });
 });
 
 describe('contesting declarations', () => {

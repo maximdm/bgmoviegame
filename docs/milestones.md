@@ -141,12 +141,28 @@ immediately, no contest window).
 - [x] Animation/micro-interaction pass — DOM hand cards and declared combos fade in
       on mount (a "deal" effect), hand cards lift on hover, and the whole thing
       respects `prefers-reduced-motion`. (Sound deferred — autoplay/UX risk.)
-- [ ] Scoring/hand-size/win-threshold tuning after playtest — see the M6 note:
-      Create-a-Movie still ends very fast (~2–3 turns); lower its bonuses or raise
-      its target once there is playtest data. **Deferred.**
+- [x] **Create-a-Movie balance tuning (win threshold).** Investigation found the
+      mode does *not* currently use the `CREATE_*` scoring bonuses or `targetScore`
+      for winning at all: 4–6 players end on a **vote win** (`THUMBS_UP_TO_WIN = 3`),
+      and 2–3 players are freeform with no winner. The real imbalance was the vote
+      bar being a fixed 3, which made a 6-player game win on 3-of-5 (60%) — *easier*
+      than a 4-player game (3-of-3, 100%): a backwards difficulty curve and the
+      source of the "~2–3 turns" complaint. Fix: a pitch now needs **unanimous
+      approval** — every other player thumbs up (`requiredThumbsUp(n) = n − 1`) —
+      applied consistently across `rules.ts`, `dice.ts` and `board.ts`, plus the
+      `ClaimMovie` UI and `MainMenu` copy. 4-player behaviour is unchanged (still
+      3-of-3), so all prior engine + e2e tests stay green. A Monte-Carlo sim
+      (`create-balance-sim.mjs`) shows the new rule leaves 4p untouched and makes
+      5p/6p games **2.7–16× longer** (6p: ~1–2 pitches → ~2–32). Two engine tests
+      lock in the 5p/6p unanimity.
 - [ ] Mapping table tuning (Setting/Period) — the heuristic mapping tables in
       `shared/src/wikidataMapping.ts` are the main data risk; tune after playtest.
       **Deferred.**
+- [ ] *(Open question, raised by this tuning)* Create-a-Movie scoring (`CREATE_*`
+      constants) and `targetScore` are currently dead for winning — if we later
+      want Create to *race to a score* (instead of/in addition to a vote win), that
+      is a larger design change touching the vote-win engine + e2e tests. Not done
+      here to stay safe and test-preserving.
 
 ## M9 — Board-game variant ✅
 Completed 2026-11-16. A second way to play over the same Find/Create objective: a

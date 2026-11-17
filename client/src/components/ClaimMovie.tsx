@@ -3,7 +3,6 @@ import {
   CONTEST_PENALTY,
   CONTEST_TIME_MS,
   NAME_TIME_MS,
-  THUMBS_UP_TO_WIN,
   type Card,
   type GameMode,
   type PendingDeclaration,
@@ -252,7 +251,9 @@ export function ClaimMovie({
     const ups = Object.values(votes).filter((value) => value === 'up').length;
     const downs = Object.values(votes).filter((value) => value === 'down').length;
     const myVote = votes[viewerId];
-    const remaining = Math.max(0, THUMBS_UP_TO_WIN - ups);
+    // Create-a-Movie wins on UNANIMOUS approval: every other player must thumb up.
+    const required = players.length - 1;
+    const remaining = Math.max(0, required - ups);
 
     return (
       <div className="trivia-overlay">
@@ -261,12 +262,12 @@ export function ClaimMovie({
             <div>
               <h2>Vote on the pitch</h2>
               <p className="muted">
-                Pitched by <strong>{declarer?.name ?? pending.playerId}</strong>. First pitch to{' '}
-                <strong>{THUMBS_UP_TO_WIN} 👍</strong> wins. Thumbs-down has no penalty.
+                Pitched by <strong>{declarer?.name ?? pending.playerId}</strong>. First pitch{' '}
+                <strong>everyone thumbs up</strong> wins. Thumbs-down has no penalty.
               </p>
             </div>
             <span className="trivia-timer trivia-timer--votes">
-              👍 {ups}/{THUMBS_UP_TO_WIN}
+              👍 {ups}/{required}
             </span>
           </header>
 

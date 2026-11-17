@@ -34,7 +34,7 @@ const MODES: readonly ModeInfo[] = [
     title: 'Create a Movie',
     tagline: 'Pitch an original film',
     description:
-      'Pitch an original film built from any cards. In 4–6 players the table votes — the first pitch to earn 3 👍 wins. 2–3 players just pitch for fun, no winner.',
+      'Pitch an original film built from any cards. In 4–6 players the table votes — the first pitch everyone thumbs up wins. 2–3 players just pitch for fun, no winner.',
   },
 ];
 
@@ -213,7 +213,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
             <p className="field-hint">
               {mode === 'create'
                 ? playerCount >= 4
-                  ? '4–6 players: the table votes — first pitch to 3 👍 wins.'
+                  ? '4–6 players: the table votes — first pitch everyone thumbs up wins.'
                   : '2–3 players: freeform pitching, no winner.'
                 : playStyle === 'hotseat'
                   ? 'Pass the device between turns.'
@@ -285,7 +285,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
         </article>
         <article className="panel rules__item">
           <h3>Create a Movie</h3>
-          <p>Pitch an original film from your cards — a title plus a short synopsis. With 4–6 players the table votes; the first pitch to earn 3 👍 wins. 2–3 players pitch just for fun, no winner.</p>
+          <p>Pitch an original film from your cards — a title plus a short synopsis. With 4–6 players the table votes; the first pitch everyone thumbs up wins. 2–3 players pitch just for fun, no winner.</p>
         </article>
         <article className="panel rules__item">
           <h3>Winning</h3>

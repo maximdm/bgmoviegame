@@ -89,6 +89,8 @@ In **vs AI** there is no peer to challenge the lone human, so a human claim skip
 
 Proposed defaults (tunable, in `shared/src/constants.ts`): hand size 7, win at ~100 pts / 50 rounds, discard reshuffles into draw pile when empty, `MISSING_CATEGORY_PENALTY` 2, `FIND_REAL_MOVIE_BONUS` 10, `CREATE_REAL_MOVIE_BONUS` 20, `NAME_TIME_MS` 30 000, `CONTEST_TIME_MS` 15 000, `CONTESTS_PER_PLAYER` 3, `CONTEST_PENALTY` 5.
 
+**Create-a-Movie vote win:** a 4–6 player pitch wins on **unanimous** approval — every other player thumbs it up (`requiredThumbsUp(n) = n − 1`; the `THUMBS_UP_TO_WIN = 3` constant is the historical 4-player baseline, now derived). This ends a backwards difficulty curve where 6-player games won on a 3-of-5 (60%) bar — faster than 4-player (3-of-3, 100%). 2–3 players stay freeform with no winner. (Create scoring/`targetScore` are not used for winning yet — see milestones M8.)
+
 ### Board-game variant
 A second way to play over the same Find/Create objective, built as an independent engine in
 `shared/src/board.ts` (so the cards loop is untouched). Instead of draw-and-discard:

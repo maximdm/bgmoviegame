@@ -7,7 +7,7 @@
  */
 import { buildDeck, createRng, shuffle } from './deck';
 import type { DeckOptions } from './deck';
-import { CONTEST_PENALTY, CONTESTS_PER_PLAYER, THUMBS_UP_TO_WIN } from './constants';
+import { CONTEST_PENALTY, CONTESTS_PER_PLAYER, requiredThumbsUp } from './constants';
 import {
   lacksCast,
   NO_CAST_PENALTY,
@@ -377,11 +377,13 @@ function resolveDeclaration(state: GameState, outcome: ResolveAction['outcome'])
 
 /**
  * A thumbs verdict on a Create-a-Movie pitch. The declarer cannot vote on their
- * own pitch. Reaching {@link THUMBS_UP_TO_WIN} distinct thumbs-up wins the game
- * for the declarer immediately. If every other player has voted and the pitch is
- * still short of the threshold, it fails — it is logged (un-verified) and the
- * turn, which already advanced when the pitch was declared, simply continues.
- * A thumbs-down has no penalty and no other effect.
+ * own pitch. A pitch wins only with unanimous approval — {@link requiredThumbsUp}
+ * = every other player thumbs it up — so a single great pitch can still win, but
+ * large tables must actually agree rather than clearing a low 3-of-N bar. If
+ * every other player has voted and the pitch is still short of unanimous, it
+ * fails — it is logged (un-verified) and the turn, which already advanced when
+ * the pitch was declared, simply continues. A thumbs-down has no penalty and no
+ * other effect.
  */
 function vote(state: GameState, player: PlayerState, action: VoteAction): ActionResult {
   const pending = state.pendingDeclaration;
@@ -406,7 +408,9 @@ function vote(state: GameState, player: PlayerState, action: VoteAction): Action
   pendingNext.votes = votes;
 
   const ups = Object.values(votes).filter((value) => value === 'up').length;
-  if (ups >= THUMBS_UP_TO_WIN) {
+  const voters = next.players.filter((entry) => entry.id !== pending.playerId);
+  // Unanimous approval: a pitch wins only when every other player thumbs it up.
+  if (ups >= requiredThumbsUp(next.players.length)) {
     next.declared.push({
       id: `combo-${next.declared.length + 1}`,
       playerId: pending.playerId,
@@ -426,7 +430,6 @@ function vote(state: GameState, player: PlayerState, action: VoteAction): Action
     return { ok: true, state: next };
   }
 
-  const voters = next.players.filter((entry) => entry.id !== pending.playerId);
   const allVoted = voters.every((entry) => votes[entry.id]);
   if (allVoted) {
     next.declared.push({
